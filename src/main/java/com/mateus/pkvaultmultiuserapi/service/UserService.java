@@ -113,4 +113,15 @@ public class UserService {
         return new UserResponseDTO(user);
     }
 
+    @Transactional
+    public void updateLastHeartbeat(User user) {
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        user.setLastHeartbeat(LocalDateTime.now());
+        userRepository.save(user);
+    }
+
 }

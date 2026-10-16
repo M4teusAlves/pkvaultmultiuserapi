@@ -7,6 +7,7 @@ CREATE TABLE users (
     actived     BOOLEAN NOT NULL DEFAULT TRUE,
     activation_token VARCHAR(255),
     activation_token_expiry TIMESTAMP,
+    last_heartbeat TIMESTAMP,
     created_at  TIMESTAMP NOT NULL DEFAULT now(),
     updated_at  TIMESTAMP NOT NULL DEFAULT now()
 );

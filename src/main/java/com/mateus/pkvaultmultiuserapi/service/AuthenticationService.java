@@ -16,6 +16,8 @@ public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final UserService userService;
+
     private final TokenService tokenService;
 
     private final DockerService dockerService;
@@ -31,6 +33,8 @@ public class AuthenticationService {
         var token = tokenService.generateToken((User) authentication.getPrincipal());
 
         dockerService.startContainer((User) authentication.getPrincipal());
+
+        userService.updateLastHeartbeat((User) authentication.getPrincipal());
 
         return new AuthenticationLoginResponseDTO(token);
     }

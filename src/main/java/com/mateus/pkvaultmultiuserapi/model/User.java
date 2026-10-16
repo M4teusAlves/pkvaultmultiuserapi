@@ -41,6 +41,7 @@ public class User implements UserDetails {
     private boolean actived;
     private String activationToken;
     private LocalDateTime activationTokenExpiry;
+    private LocalDateTime lastHeartbeat;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp

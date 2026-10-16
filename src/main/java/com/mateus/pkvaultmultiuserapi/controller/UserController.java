@@ -3,16 +3,18 @@ package com.mateus.pkvaultmultiuserapi.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mateus.pkvaultmultiuserapi.dto.user.UserResponseDTO;
+import com.mateus.pkvaultmultiuserapi.model.User;
 import com.mateus.pkvaultmultiuserapi.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -29,20 +31,20 @@ public class UserController {
         return ResponseEntity.ok(userService.findAllUsers());
     }
 
-    @GetMapping("/teste")
-    public String teste() {
-        return new String("Testste");
-    }
-
-    @GetMapping("/teste2")
-    public String teste2() {
-        return new String("Testste ADMIN");
-    }
-
     @PutMapping("activate/{token}")
     public ResponseEntity<UserResponseDTO> activeUser(@PathVariable String token) {
         UserResponseDTO userResponseDTO = userService.activeUser(token);
         return ResponseEntity.ok(userResponseDTO);
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> heartbeat() {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        userService.updateLastHeartbeat(user);
+
+        return ResponseEntity.ok().build();
     }
     
     

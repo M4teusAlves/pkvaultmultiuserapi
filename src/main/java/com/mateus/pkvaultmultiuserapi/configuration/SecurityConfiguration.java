@@ -13,14 +13,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private final SecurityFilter securityFilter;
+    private SecurityFilter securityFilter;
+
+    public SecurityConfiguration(SecurityFilter securityFilter) {
+        super();
+        this.securityFilter = securityFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -29,7 +32,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/user/activate/*").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/user/activate/*").permitAll()
                     .requestMatchers(HttpMethod.GET, "/user/teste2").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
                     .anyRequest().authenticated()

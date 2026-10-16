@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.exception.NotModifiedException;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.RestartPolicy;
@@ -108,7 +109,13 @@ public class DockerService {
     public void startContainer(User user) {
         Container container = containerRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Container not found for user: " + user.getUsername()));
-        dockerClient.startContainerCmd(container.getContainerId()).exec();
+        
+        try {
+            dockerClient.startContainerCmd(container.getContainerId()).exec();
+        } catch (NotModifiedException e) {
+            new RuntimeException("Container is already running: " + container.getContainerId());
+        }
+        
         containerRepository.updateStatus(container.getContainerId(), ContainerStatus.RUNNING);
     }
 }
