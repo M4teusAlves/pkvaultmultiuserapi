@@ -31,11 +31,14 @@ public class DockerService {
 
     private final ContainerRepository containerRepository;
 
+    private final NpmService npmService;
+
     @Value("${docker.image.pkvault}")
     private String pkvaultImage;
 
-    public DockerService(ContainerRepository containerRepository) {
+    public DockerService(ContainerRepository containerRepository, NpmService npmService) {
         this.containerRepository = containerRepository;
+        this.npmService = npmService;
 
         DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
                 .withDockerHost("unix:///var/run/docker.sock")
@@ -86,6 +89,8 @@ public class DockerService {
         containerEntity.setProxyHostId(1);
         containerEntity.setUser(user);
         containerRepository.save(containerEntity);
+
+        npmService.createProxyHost(user.getLogin(), "pkvault_" + user.getLogin(), 3000);
 
 
         return container.getId();
