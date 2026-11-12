@@ -39,7 +39,7 @@ public class UserService {
         Container container = containerRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Container not found for user: " + user.getUsername()));
 
-        String url = "http://localhost:" + container.getPort();
+        String url = "https://" + user.getLogin() + ".pkvault.mateus-alves.dev";
 
         return new UserMeResponseDTO(user.getLogin(), url);
     }
