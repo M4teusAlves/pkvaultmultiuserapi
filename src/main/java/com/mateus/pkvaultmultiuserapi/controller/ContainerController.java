@@ -12,6 +12,7 @@ import com.mateus.pkvaultmultiuserapi.model.User;
 import com.mateus.pkvaultmultiuserapi.service.DockerService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/container")
@@ -24,11 +25,16 @@ public class ContainerController {
     public ResponseEntity<String> create() {
 
         User user = (User) SecurityContextHolder.getContext()
-                                           .getAuthentication()
-                                           .getPrincipal();
+                .getAuthentication()
+                .getPrincipal();
 
         String containerId = dockerService.createContainer(user);
         return ResponseEntity.ok("Container criado: " + containerId);
+    }
+
+    @GetMapping("/me")
+    public String getMyContainer() {
+        return new String();
     }
 
     @DeleteMapping("/{id}")

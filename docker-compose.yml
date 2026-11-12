@@ -1,0 +1,28 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: pkvaultmultiuserapi
+    env_file:
+      - .env
+    environment:
+      EMAIL_USERNAME: ${MAIL_USERNAME}
+      EMAIL_PASSWORD: ${MAIL_PASSWORD}
+      EMAIL_HOST: ${MAIL_HOST}
+      EMAIL_PORT: ${MAIL_PORT}
+      DOCKER_IMAGE_PKVAULT: ${IMAGE_PKVAULT}
+      POSTGRES_URL: ${POSTGRES_URL}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8084:8084"
+    networks:
+      - worknet
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+
+networks:
+  worknet:
+    external: true

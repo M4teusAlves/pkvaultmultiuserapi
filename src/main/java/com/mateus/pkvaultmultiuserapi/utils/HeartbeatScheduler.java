@@ -31,6 +31,7 @@ public class HeartbeatScheduler {
         for (Container container : runningContainers) {
             try {
                 dockerService.stopContainer(container.getContainerId());
+                
                 container.setStatus(ContainerStatus.STOPPED);
                 containerRepository.save(container);
             } catch (Exception e) {

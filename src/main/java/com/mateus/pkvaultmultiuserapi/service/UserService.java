@@ -9,9 +9,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mateus.pkvaultmultiuserapi.dto.user.CreateUserDTO;
+import com.mateus.pkvaultmultiuserapi.dto.user.UserMeResponseDTO;
 import com.mateus.pkvaultmultiuserapi.dto.user.UserResponseDTO;
 import com.mateus.pkvaultmultiuserapi.exception.User.UserAlreadyExistsException;
 import com.mateus.pkvaultmultiuserapi.model.User;
+import com.mateus.pkvaultmultiuserapi.model.Container;
+import com.mateus.pkvaultmultiuserapi.repository.ContainerRepository;
 import com.mateus.pkvaultmultiuserapi.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -27,9 +30,23 @@ public class UserService {
 
     private final EmailService emailService;
 
+    private final ContainerRepository containerRepository;
+
+    @Transactional
+    public UserMeResponseDTO me(String login) {
+        User user = (User) userRepository.findByLogin(login);
+
+        Container container = containerRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Container not found for user: " + user.getUsername()));
+
+        String url = "http://localhost:" + container.getPort();
+
+        return new UserMeResponseDTO(user.getLogin(), url);
+    }
+
     @Transactional
     public UserResponseDTO createUser(CreateUserDTO createUserDTO) {
-        
+
         if (userRepository.existsByLogin(createUserDTO.login())) {
             throw new UserAlreadyExistsException("User with login " + createUserDTO.login() + " already exists.");
         }
@@ -53,17 +70,16 @@ public class UserService {
 
         var userReponseDTO = new UserResponseDTO(user);
 
-
         return userReponseDTO;
     }
 
     @Transactional
-    public UserDetails findUserDetailsByLogin(String login){
+    public UserDetails findUserDetailsByLogin(String login) {
         return userRepository.findByLogin(login);
     }
 
     @Transactional
-    public List<UserResponseDTO> findAllUsers(){
+    public List<UserResponseDTO> findAllUsers() {
 
         List<User> users = userRepository.findAll();
 
@@ -74,7 +90,7 @@ public class UserService {
             UserResponseDTO userResponse = new UserResponseDTO(user);
 
             usersResponse.add(userResponse);
-            
+
         }
 
         return usersResponse;
@@ -91,7 +107,7 @@ public class UserService {
             throw new RuntimeException("Expired activation token");
         }
 
-        if(user.isActived()) {
+        if (user.isActived()) {
 
             new RuntimeException("User is already active");
 
@@ -107,7 +123,7 @@ public class UserService {
             user.setActivationToken(null);
             user.setActivationTokenExpiry(null);
             userRepository.save(user);
-            
+
         }
 
         return new UserResponseDTO(user);

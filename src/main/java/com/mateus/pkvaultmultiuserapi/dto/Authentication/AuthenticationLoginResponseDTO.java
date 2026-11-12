@@ -1,7 +1,7 @@
 package com.mateus.pkvaultmultiuserapi.dto.Authentication;
 
 public record AuthenticationLoginResponseDTO(
-    String token
+    String message
 ) {
     
 }
