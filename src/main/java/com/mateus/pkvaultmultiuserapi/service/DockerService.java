@@ -76,6 +76,7 @@ public class DockerService {
                 .withName(containerName)
                 .withHostConfig(
                     HostConfig.newHostConfig()
+                        .withNetworkMode("worknet")
                         .withPortBindings(PortBinding.parse(maxPort + ":3000"))
                         .withRestartPolicy(RestartPolicy.alwaysRestart())
                 )
