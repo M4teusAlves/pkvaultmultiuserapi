@@ -91,7 +91,7 @@ public class DockerService {
         containerEntity.setUser(user);
         containerRepository.save(containerEntity);
 
-        npmService.createProxyHost(user.getLogin(), "pkvault_" + user.getLogin(), maxPort);
+        npmService.createProxyHost(user.getLogin(), "pkvault_" + user.getLogin(), 3000);
 
 
         return container.getId();
